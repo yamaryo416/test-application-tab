@@ -41,3 +41,40 @@ window.addEventListener("load", () => {
     ).textContent = `最終記録時刻: ${storageTime}`;
   }
 });
+
+// Service Worker登録・解除の制御
+document.getElementById("register-sw").addEventListener("click", async () => {
+  if ("serviceWorker" in navigator) {
+    try {
+      const registration = await navigator.serviceWorker.register("./sw.js");
+      document.getElementById("sw-status").textContent =
+        "Service Workerが登録されました";
+      console.log("Service Workerが登録されました");
+    } catch (error) {
+      document.getElementById(
+        "sw-status"
+      ).textContent = `Service Worker登録エラー: ${error}`;
+      console.error("Service Worker登録エラー:", error);
+    }
+  }
+});
+
+document.getElementById("unregister-sw").addEventListener("click", async () => {
+  if ("serviceWorker" in navigator) {
+    try {
+      const registrations = await navigator.serviceWorker.getRegistrations();
+      // すべてのService Workerを解除
+      await Promise.all(
+        registrations.map((registration) => registration.unregister())
+      );
+      document.getElementById("sw-status").textContent =
+        "Service Workerが解除されました";
+      console.log("Service Workerが解除されました");
+    } catch (error) {
+      document.getElementById(
+        "sw-status"
+      ).textContent = `Service Worker解除エラー: ${error}`;
+      console.error("Service Worker解除エラー:", error);
+    }
+  }
+});
